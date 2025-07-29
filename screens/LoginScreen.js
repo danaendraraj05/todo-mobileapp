@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import API from '../services/api'; // Your Axios instance
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -13,8 +14,9 @@ const LoginScreen = ({ navigation }) => {
         password,
       });
 
-      const { access, refresh } = response.data;
-      Alert.alert('Login Successful', `Access Token: ${access}`);
+      const token = response.data.access;
+      await AsyncStorage.setItem('accessToken', token);
+      navigation.navigate('Projects');
     } catch (error) {
       console.log(error.response?.data || error.message);
       Alert.alert('Login Failed', 'Invalid credentials or server error.');
